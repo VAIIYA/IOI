@@ -1,0 +1,40 @@
+---
+title: Large language models
+summary: Wat taalmodellen zijn, hoe ze worden getraind en waarom ze soms fouten maken.
+updated: "2026-11-10"
+featured: true
+infobox:
+  Afkorting: LLM
+  Basis: Transformer-architectuur (2017)
+  Voorbeelden: ChatGPT, Claude, Gemini, Llama
+related:
+  - /ai/kunstmatige-intelligentie
+  - /ai/machine-learning
+sources:
+  - label: Vaswani e.a. (2017) — Attention Is All You Need
+    url: https://arxiv.org/abs/1706.03762
+  - label: Wikipedia (en) — Transformer (deep learning architecture)
+    url: https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)
+---
+
+## Wat is een taalmodel?
+
+Een large language model (LLM) is een neuraal netwerk dat getraind is op enorme hoeveelheden tekst. In de kern leert het één ding: het voorspelt welk stukje tekst (een token) waarschijnlijk op het vorige volgt. Door dat heel vaak te herhalen, ontstaan antwoorden die vloeiend en vaak nuttig klinken.
+
+## De architectuur
+
+Moderne taalmodellen gebruiken de transformer-architectuur, die in 2017 werd beschreven in het artikel "Attention Is All You Need". Het belangrijkste onderdeel is het zogenoemde attention-mechanisme: het model bepaalt per woord welke andere woorden in de tekst er het meest toe doen.
+
+## Hoe ze worden getraind
+
+1. **Pre-training**: het model leert van grote hoeveelheden tekst om het volgende token te voorspellen.
+2. **Fine-tuning**: het model wordt verder getraind op voorbeelden van goede antwoorden en gesprekken.
+3. **Afstemming**: menselijke beoordelingen of andere technieken sturen het model richting bruikbare en veilige antwoorden.
+
+## Beperkingen
+
+- **Hallucinaties**: een model kan met overtuiging onjuiste feiten, bronnen of citaten noemen.
+- **Kennis tot een datum**: wat het model weet, komt uit de trainingsdata. Actuele informatie vraagt om een zoekfunctie of een koppeling met een bron.
+- **Contextlimiet**: het model kan maar een beperkte hoeveelheid tekst tegelijk verwerken.
+
+Gebruik taalmodellen dus als hulpmiddel. Controleer belangrijke antwoorden altijd bij de bron.
