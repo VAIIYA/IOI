@@ -18,6 +18,10 @@ npm run dev
 - Draai het lokaal met `npm run feed:update`.
 - Om de feed elk uur automatisch bij te werken, voeg je een GitHub Action toe die dit script draait en wijzigingen commit.
 
+## Nieuwsberichten
+
+Berichten in `content/news/` zijn korte Nederlandse samenvattingen van Engelstalig nieuws, met een link naar de bron. De kandidaten komen uit de Google News-topics GTA VI en Gaming; zie `npm run news:candidates` en [CONTRIBUTING.md](CONTRIBUTING.md). Automatisch vertalen vraagt om een LLM-API-sleutel en is nog niet ingericht.
+
 ## Artikelen toevoegen
 
 Artikelen zijn MDX-bestanden in `content/games/` of `content/ai/`. Zie [CONTRIBUTING.md](CONTRIBUTING.md).

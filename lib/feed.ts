@@ -19,6 +19,8 @@ const itemSchema = z.object({
   url: z.string().url(),
   source: z.string(),
   kind: z.enum(feedKinds),
+  /** "en" = Engelstalig kandidaat-bericht, niet getoond als kop (zie scripts/news-candidates.mjs). */
+  lang: z.string().optional(),
   publishedAt: z.string(),
   firstSeen: z.string().optional(),
   summary: z.string().optional(),
@@ -43,11 +45,13 @@ function readJson(file: string): unknown {
   return JSON.parse(fs.readFileSync(full, "utf8"));
 }
 
-/** Newest first. Pass a kind to filter. */
+/** Newest first. Engelstalige kandidaten (lang "en") worden niet getoond. Pass a kind to filter. */
 export function getFeedItems(kind?: FeedKind): FeedItem[] {
   const parsed = z.array(itemSchema).safeParse(readJson("items.json") ?? []);
   if (!parsed.success) throw new Error(`Invalid content/feed/items.json: ${parsed.error.message}`);
-  const items = [...parsed.data].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  const items = parsed.data
+    .filter((i) => i.lang !== "en")
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
   return kind ? items.filter((i) => i.kind === kind) : items;
 }
 

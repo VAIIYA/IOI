@@ -24,13 +24,35 @@ const USER_AGENT = "IOIFeedBot/1.0";
 const ON_TOPIC =
   /\b(games?|gaming|gamer|videogames?|video games?|indiegames?|game ?studio|game ?engine|playstation|xbox|nintendo|steam|unreal engine|unity|godot|AI|A\.I\.|kunstmatige intelligentie|artificial intelligence|generatieve|taalmodel|language model|LLM|chatbot|machine learning)\b/i;
 
-// Dit is een games- en AI-site: koppen over de GTA-reeks (de vorige focus van deze codebase) worden uitgesloten.
-const OFF_TOPIC = /\bGTA\b|Grand Theft Auto/i;
-
 const gnewsNL = (q) =>
   `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=nl&gl=NL&ceid=NL:nl`;
+const gnewsEN = (q) =>
+  `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-US&gl=US&ceid=US:en`;
+const gnewsTopic = (id) =>
+  `https://news.google.com/rss/topics/${id}?hl=en-US&gl=US&ceid=US:en`;
 
+// Bronnen met `lang: "en"` zijn kandidaten voor onze eigen Nederlandse berichten
+// (zie scripts/news-candidates.mjs). Ze verschijnen niet als kop op de site.
+// `curated: true` slaat het trefwoordfilter over, omdat de topic al is samengesteld.
+// `url` mag een lijst zijn: de eerste feed met items wint (topic-feeds zijn soms leeg).
 const SOURCES = [
+  {
+    name: "Google News topic: Grand Theft Auto VI",
+    kind: "news",
+    lang: "en",
+    curated: true,
+    url: [
+      gnewsTopic("CAAqKAgKIiJDQkFTRXdvTkwyY3ZNVEYwWm5kM1ltcDBjeElDWlc0b0FBUAE"),
+      gnewsEN('("GTA VI" OR "Grand Theft Auto VI") when:2d'),
+    ],
+  },
+  {
+    name: "Google News topic: Gaming",
+    kind: "news",
+    lang: "en",
+    curated: true,
+    url: [gnewsTopic("CAAqIQgKIhtDQkFTRGdvSUwyMHZNREZ0ZHpFU0FtVnVLQUFQAQ")],
+  },
   {
     name: "Google News (games)",
     kind: "news",
@@ -119,7 +141,7 @@ function parseFeed(xml, source) {
     const publisher = getText(block, "source");
     if (publisher) title = title.replace(new RegExp(`\\s+-\\s+${publisher.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`), "");
 
-    if (!ON_TOPIC.test(title) || OFF_TOPIC.test(title)) continue;
+    if (!source.curated && !ON_TOPIC.test(title)) continue;
 
     const description = getText(block, "description") ?? getText(block, "media:description") ?? getText(block, "summary") ?? getText(block, "content");
     const summary =
@@ -133,6 +155,7 @@ function parseFeed(xml, source) {
       url,
       source: publisher ?? source.name,
       kind: source.kind,
+      ...(source.lang && { lang: source.lang }),
       publishedAt: publishedAt.toISOString(),
       ...(summary && { summary }),
     });
@@ -166,8 +189,11 @@ async function main() {
   let okSources = 0;
   for (const source of SOURCES) {
     try {
-      const xml = await fetchText(source.url);
-      const items = parseFeed(xml, source);
+      let items = [];
+      for (const url of [].concat(source.url)) {
+        items = parseFeed(await fetchText(url), source);
+        if (items.length) break;
+      }
       fetched.push(...items);
       okSources++;
       console.log(`ok   ${source.name}: ${items.length} items`);

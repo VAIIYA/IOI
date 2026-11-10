@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { FeedRow, SectionHeading } from "@/components/FeedComponents";
+import { PostRow } from "@/components/PostCard";
 import { getFeedItems } from "@/lib/feed";
+import { getPosts } from "@/lib/news";
 
 export const metadata: Metadata = {
   title: "Nieuws",
@@ -10,6 +12,7 @@ export const metadata: Metadata = {
 
 export default function NewsPage() {
   const items = getFeedItems();
+  const posts = getPosts();
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
@@ -20,10 +23,27 @@ export default function NewsPage() {
         oorspronkelijke artikel. Wij kopiëren geen artikelen.
       </p>
 
-      <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_320px]">
+      {posts.length > 0 && (
+        <section className="mt-12" aria-labelledby="posts-heading">
+          <div id="posts-heading">
+            <SectionHeading>Onze berichten</SectionHeading>
+          </div>
+          <p className="mb-6 max-w-2xl text-sm text-muted">
+            Korte Nederlandse samenvattingen van GTA VI- en gamingnieuws, elk met een link naar het oorspronkelijke
+            artikel.
+          </p>
+          <ul className="max-w-3xl">
+            {posts.map((p) => (
+              <PostRow key={p.slug} post={p} />
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <div className="mt-16 grid gap-12 lg:grid-cols-[1fr_320px]">
         <section aria-labelledby="news-heading">
           <div id="news-heading">
-            <SectionHeading>Alle nieuws</SectionHeading>
+            <SectionHeading>Koppen uit andere bronnen</SectionHeading>
           </div>
           {items.length > 0 ? (
             <ul>

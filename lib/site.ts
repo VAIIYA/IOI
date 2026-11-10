@@ -22,5 +22,6 @@ export const sections = [{ href: "/news", label: "Nieuws" }] as const;
 export type CategorySlug = (typeof categories)[number]["slug"];
 
 export function categoryLabel(slug: string) {
+  if (slug === "news") return "Nieuws";
   return categories.find((c) => c.slug === slug)?.label ?? slug;
 }

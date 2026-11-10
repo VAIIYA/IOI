@@ -2,8 +2,10 @@ import Link from "next/link";
 import { ArticleCard } from "@/components/ArticleCard";
 import { AdSlot } from "@/components/AdSlot";
 import { FeedLead, FeedRow, SectionHeading } from "@/components/FeedComponents";
+import { PostRow } from "@/components/PostCard";
 import { getAllArticles } from "@/lib/content";
 import { getFeedItems, getWikipedia } from "@/lib/feed";
+import { getPosts } from "@/lib/news";
 import { categories } from "@/lib/site";
 
 export default function Home() {
@@ -11,6 +13,7 @@ export default function Home() {
   const [lead, ...rest] = all;
   const secondary = rest.slice(0, 4);
   const latest = rest.slice(4, 14);
+  const posts = getPosts().slice(0, 4);
   const wiki = getWikipedia();
   const featured = getAllArticles()
     .filter((a) => a.featured)
@@ -53,6 +56,21 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      {posts.length > 0 && (
+        <section className="mx-auto max-w-6xl px-5 pt-12" aria-labelledby="posts-heading">
+          <div id="posts-heading">
+            <SectionHeading href="/news" linkLabel="Meer">
+              Nieuwste berichten
+            </SectionHeading>
+          </div>
+          <ul className="max-w-3xl">
+            {posts.map((p) => (
+              <PostRow key={p.slug} post={p} />
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div className="mx-auto grid max-w-6xl gap-12 px-5 py-12 lg:grid-cols-[1fr_320px]">
         <section aria-labelledby="latest-heading">
